@@ -1,0 +1,165 @@
+local Character = game.Players.LocalPlayer.Character
+local FakeCharacter = Instance.new("Model")
+FakeCharacter.Parent = game.Players.LocalPlayer.Character
+local FakeTorso = Instance.new("Part")
+FakeTorso.Name = "Torso"
+FakeTorso.CanCollide = false
+FakeTorso.Anchored = true
+local FakeHead = Instance.new("Part")
+FakeHead.Name = "Head"
+FakeHead.Parent = FakeCharacter
+FakeHead.Anchored = true
+FakeHead.CanCollide = false
+local FakeHumanoid = Instance.new("Humanoid")
+FakeHumanoid.Name = "Humanoid"
+FakeHumanoid.Parent = FakeCharacter
+FakeTorso.Position = Vector3.new(0,9999,0)
+game.Players.LocalPlayer.Character = FakeCharacter
+wait(3)
+game.Players.LocalPlayer.Character = Character
+wait(3)
+local FakeHumanoid2 = Instance.new("Humanoid")
+FakeHead:Clone()
+FakeHumanoid2.Parent = game.Players.LocalPlayer.Character
+
+local FlingPart = game.Players.LocalPlayer.Character.HumanoidRootPart
+for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+	if v ~= FlingPart and  v.Name ~= "Humanoid" then
+		v:Destroy()
+	end
+end
+
+FlingPart.Transparency = 0
+FlingPart.Color = Color3.new(1, 1, 1)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CanCollide = false
+
+
+repeat wait() until game.Players.LocalPlayer:GetMouse()
+if flyKeyDown or flyKeyUp then flyKeyDown:Disconnect() flyKeyUp:Disconnect() end
+
+local T = game.Players.LocalPlayer.Character.HumanoidRootPart
+local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+local SPEED = 0
+
+flyKeyDown = game.Players.LocalPlayer:GetMouse().KeyDown:Connect(function(KEY)
+	if KEY:lower() == 'w' then
+		CONTROL.F = 1
+	elseif KEY:lower() == 's' then
+		CONTROL.B = - 1
+	elseif KEY:lower() == 'a' then
+		CONTROL.L = - 1
+	elseif KEY:lower() == 'd' then 
+		CONTROL.R = 1
+	elseif KEY:lower() == 'e' then
+		CONTROL.Q = 1*2
+	elseif KEY:lower() == 'q' then
+		CONTROL.E = -1*2
+	end
+	pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Track end)
+end)
+flyKeyUp = game.Players.LocalPlayer:GetMouse().KeyUp:Connect(function(KEY)
+	if KEY:lower() == 'w' then
+		CONTROL.F = 0
+	elseif KEY:lower() == 's' then
+		CONTROL.B = 0
+	elseif KEY:lower() == 'a' then
+		CONTROL.L = 0
+	elseif KEY:lower() == 'd' then
+		CONTROL.R = 0
+	elseif KEY:lower() == 'e' then
+		CONTROL.Q = 0
+	elseif KEY:lower() == 'q' then
+		CONTROL.E = 0
+	end
+end)
+FLYING = true
+local BG = Instance.new('BodyGyro')
+local BV = Instance.new('BodyVelocity')
+BG.P = 9e4
+BG.Parent = T
+BV.Parent = T
+BG.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+BG.cframe = T.CFrame
+BV.velocity = Vector3.new(0, 0, 0)
+BV.maxForce = Vector3.new(9e9, 9e9, 9e9)
+task.spawn(function()
+	repeat wait()
+		game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
+		if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
+			SPEED = 50
+		elseif not (CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0) and SPEED ~= 0 then
+			SPEED = 0
+		end
+		if (CONTROL.L + CONTROL.R) ~= 0 or (CONTROL.F + CONTROL.B) ~= 0 or (CONTROL.Q + CONTROL.E) ~= 0 then
+			BV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (CONTROL.F + CONTROL.B)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(CONTROL.L + CONTROL.R, (CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * SPEED
+			lCONTROL = {F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R}
+		elseif (CONTROL.L + CONTROL.R) == 0 and (CONTROL.F + CONTROL.B) == 0 and (CONTROL.Q + CONTROL.E) == 0 and SPEED ~= 0 then
+			BV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (lCONTROL.F + lCONTROL.B)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(lCONTROL.L + lCONTROL.R, (lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * SPEED
+		else
+			BV.velocity = Vector3.new(0, 0, 0)
+		end
+		BG.cframe = workspace.CurrentCamera.CoordinateFrame
+	until not FLYING
+	CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+	lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+	SPEED = 0
+	BG:Destroy()
+	BV:Destroy()
+	if game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
+		game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+	end
+end)
+
+local vu = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+	vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	wait(1)
+	vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+
+workspace.CurrentCamera.CameraSubject = FlingPart
+local BodyThrust = Instance.new("BodyThrust")
+BodyThrust.Parent = game.Players.LocalPlayer.Character.HumanoidRootPart
+BodyThrust.Force = Vector3.new(99999,99999*10,99999)
+BodyThrust.Location = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+wait(.25)
+local OldNameCall = nil
+while task.wait() do
+	OldNameCall = hookmetamethod(game, "__namecall", function(Self, ...)
+		local NameCallMethod = getnamecallmethod()
+
+		if tostring(string.lower(NameCallMethod)) == "kick" then
+			return nil
+		end
+
+		return OldNameCall(Self, ...)
+	end)
+	
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CanCollide = false
+	for i,v in pairs(game.Players:GetChildren()) do
+		if v.Name ~= game.Players.LocalPlayer.Name then
+			local character = v.Character
+			if character then
+				if character:FindFirstChild("HumanoidRootPart") then
+					for i = 0, 100, 1 do
+						task.wait()
+						if character:FindFirstChild("HumanoidRootPart") then
+							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(character:FindFirstChild("HumanoidRootPart").Position)
+						end
+					end
+					task.wait()
+				end
+			end
+		end
+	end
+end
+
+task.spawn(function()
+	local vu = game:GetService("VirtualUser")
+	game:GetService("Players").LocalPlayer.Idled:connect(function()
+		vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+		wait(1)
+		vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	end)
+end)
