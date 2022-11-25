@@ -568,11 +568,12 @@ local censorHopToggle = serverHopTab:AddSwitch("Booth Censor", function(bool)
 	if oldTestingVersionSettingsLock then
 		return
 	end
-	getgenv().settings.censorHop = bool
+	getgenv().oldTestingVersionSettings.censorHop = bool
 	saveoldTestingVersionSettings()
 	if bool then
 		update()
 	end
+	vcToggle:Set(getgenv().oldTestingVersionSettings.censorHop)
 end)
 
 serverHopTab:AddButton("Server Hop", function()
