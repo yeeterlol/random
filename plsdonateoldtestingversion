@@ -410,14 +410,12 @@ local autoThanks = chatTab:AddSwitch("Auto Thank You", function(bool)
 	getgenv().settings.autoThanks = bool
 	saveSettings()
 end)
-
 autoThanks:Set(getgenv().settings.autoThanks)
 
 local autoJump = chatTab:AddSwitch("Auto Jump Per Robux", function(bool)
 	getgenv().settings.autoJump = bool
 	saveSettings()
 end)
-
 autoJump:Set(getgenv().settings.autoJump)
 
 local autoBeg = chatTab:AddSwitch("Auto Beg", function(bool)
@@ -432,8 +430,8 @@ local autoBeg = chatTab:AddSwitch("Auto Beg", function(bool)
 		task.cancel(spamming)
 	end
 end)
-
 autoBeg:Set(getgenv().settings.autoBeg)
+
 local thanksDelay = chatTab:AddSlider("Thanks Delay (S)", function(x) 
 	if settingsLock then
 		return 
