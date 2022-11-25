@@ -92,7 +92,7 @@ if isfile("plsdonateoldtestingversion.txt") then
 	end
 
 end
-local sNames = {"textUpdateToggle", "textUpdateDelay", "serverHopToggle", "serverHopDelay", "hexBox", "goalBox", "webhookToggle", "webhookBox", "danceChoice", "thanksMessage", "signToggle", "customBoothText", "signUpdateToggle", "signText", "signHexBox", "autoThanks", "autoBeg", "begMessage", "begDelay", "fpsLimit", "render", "thanksDelay", "vcServer"}
+local sNames = {"textUpdateToggle", "textUpdateDelay", "serverHopToggle", "serverHopDelay", "hexBox", "goalBox", "webhookToggle", "webhookBox", "danceChoice", "thanksMessage", "signToggle", "customBoothText", "signUpdateToggle", "signText", "signHexBox", "autoThanks", "autoBeg", "begMessage", "begDelay", "fpsLimit", "render", "thanksDelay", "vcServer", "autoJump", "censorHop"}
 local sValues = {true, 30, true, 30, "#32CD32", 5, false, "", "Disabled", {"Thank you", "Thanks!", "ty :)", "tysm!"}, false, "WEEKLY GOAL: $C / $G", false, "your text here", "#ffffff", true, false, {"Please donate", "I'm so close to my goal!", "donate to me", "please"}, 300, 60, false, 3, false}
 if #getgenv().oldTestingVersionSettings ~= sNames then
 	for i, v in ipairs(sNames) do
@@ -202,6 +202,10 @@ local function update()
 			end
 			require(game.ReplicatedStorage.Remotes).Event("SetBoothText"):FireServer(boothText, "booth")
 			task.wait(3)
+			if string.find(myBooth.Sign.TextLabel.Text, "# #") or string.find(myBooth.Sign.TextLabel.Text, "##") and getgenv().oldTestingVersionSettings.censorHop and not getgenv().censored then
+				queueonteleport("getgenv().censored = true")
+				serverHop()
+			end
 		end
 	end
 	if getgenv().oldTestingVersionSettings.signToggle and getgenv().oldTestingVersionSettings.signUpdateToggle and getgenv().oldTestingVersionSettings.signText and signPass then
@@ -217,6 +221,11 @@ local function update()
 				task.wait(3)
 			end
 			require(game.ReplicatedStorage.Remotes).Event("SetBoothText"):FireServer(signText, "sign")
+			task.wait(3)
+			if string.find(currentSign, "# #") or string.find(currentSign, "##") and getgenv().oldTestingVersionSettings.censorHop and not getgenv().censored then
+				queueonteleport("getgenv().censored = true")
+				serverHop()
+			end
 		end
 	end
 end
@@ -410,6 +419,13 @@ local autoThanks = chatTab:AddSwitch("Auto Thank You", function(bool)
 	saveoldTestingVersionSettings()
 end)
 autoThanks:Set(getgenv().oldTestingVersionSettings.autoThanks)
+
+local autoJump = chatTab:AddSwitch("Auto Jump Per Robux", function(bool)
+	getgenv().oldTestingVersionSettings.autoJump = bool
+	saveSettings()
+end)
+autoJump:Set(getgenv().oldTestingVersionSettings.autoJump)
+
 local autoBeg = chatTab:AddSwitch("Auto Beg", function(bool)
 	if oldTestingVersionSettingsLock then
 		return
@@ -683,13 +699,37 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 			webhook(tostring("💰 Somebody tipped ".. Players.LocalPlayer.leaderstats.Raised.value - RaisedC.. " Robux to ".. Players.LocalPlayer.DisplayName.. " (Total: " .. Players.LocalPlayer.leaderstats.Raised.value.. ")"))
 		end
 	end
-	RaisedC = Players.LocalPlayer.leaderstats.Raised.value
+	
 	if getgenv().oldTestingVersionSettings.autoThanks then
 		task.spawn(function()
 			task.wait(getgenv().oldTestingVersionSettings.thanksDelay)
 			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(getgenv().oldTestingVersionSettings.thanksMessage[math.random(#getgenv().oldTestingVersionSettings.thanksMessage)],"All")
 		end)
 	end
+	task.wait(.5)
+	if getgenv().oldTestingVersionSettings.autoJump then
+		task.spawn(function()
+			task.wait(getgenv().oldTestingVersionSettings.thanksDelay)
+			for i = 1, tonumber(Players.LocalPlayer.leaderstats.Raised.value - RaisedC), 1 do
+				if game.Players.LocalPlayer.Character ~= nil then
+					if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+						game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity.X, game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity.Y + 60, game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity.Z)
+						task.wait(.75)
+						if getgenv().oldTestingVersionSettings.webhookToggle and getgenv().oldTestingVersionSettings.webhookBox then
+							webhook("Current jump count: "..i)
+						end
+					end	
+				end
+			end
+			task.wait(1.25)
+			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Completed "..tostring(Players.LocalPlayer.leaderstats.Raised.value - RaisedC).." jumps!","All")
+			if getgenv().oldTestingVersionSettings.webhookToggle and getgenv().oldTestingVersionSettings.webhookBox then
+				webhook("Completed "..tostring(Players.LocalPlayer.leaderstats.Raised.value - RaisedC).." jumps!")
+			end
+		end)
+	end
+	
+	RaisedC = Players.LocalPlayer.leaderstats.Raised.value
 	task.wait(getgenv().oldTestingVersionSettings.textUpdateDelay)
 	update()
 end)
