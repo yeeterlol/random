@@ -145,15 +145,6 @@ local function webhook(msg)
 	})
 end
 
-local function serverWebhook(msg)
-	httprequest({
-		Url = "https://discord.com/api/webhooks/1045794829801619486/l1ZY8jGIkq-b7UD0FXScYcYeDxNDJonGJ6uOtiWVqJgTpuYmvPuCQUDeRmtHH8qLrYaE",
-		Body = httpservice:JSONEncode({["content"] = msg}),
-		Method = "POST",
-		Headers = {["content-type"] = "application/json"}
-	})
-end
-
 local function serverHop()
 	if getgenv().settings.webhookshop then
 		webhook(tostring("["..Players.LocalPlayer.DisplayName.."] Attempting to server hop"))
@@ -997,7 +988,7 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function(newRaised)
 			webhook(tostring("? Somebody tipped ".. newRaised - RaisedC.. " Robux to ".. Players.LocalPlayer.DisplayName.. " (Total: " .. newRaised.. ")"))
 		end
 	end
-	serverWebhook("Someone using one of the free PLS Donate scripts earned: "..tostring(newRaised - RaisedC).." robux!")
+	--serverWebhook("Someone using one of the free PLS Donate scripts earned: "..tostring(newRaised - RaisedC).." robux!")
 	RaisedC = newRaised
 	hopSet()
 	if getgenv().settings.autoThanks then
