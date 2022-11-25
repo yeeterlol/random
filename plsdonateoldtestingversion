@@ -443,7 +443,9 @@ end,
 	["min"] = 1,
 	["max"] = 120
 })
-thanksDelay:Set((getgenv().settings.thanksDelay / 120) * 100)
+if tonumber(getgenv().settings.thanksDelay) ~= nil then
+	thanksDelay:Set((getgenv().settings.thanksDelay / 120) * 100)
+end
 
 local begDelay = chatTab:AddSlider("Begging Delay (S)", function(x) 
 	if settingsLock then
@@ -456,7 +458,9 @@ end,
 	["min"] = 1,
 	["max"] = 300
 })
-begDelay:Set((getgenv().settings.begDelay / 300) * 100)
+if tonumber(getgenv().settings.begDelay) ~= nil then
+	begDelay:Set((getgenv().settings.begDelay / 300) * 100)
+end
 
 local tym = chatTab:AddFolder("Thank You Messages:")
 local thanksMessage = tym:AddConsole({
