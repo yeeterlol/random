@@ -714,7 +714,7 @@ local RaisedC = Players.LocalPlayer.leaderstats.Raised.value
 Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 	hopSet()
 	if getgenv().oldTestingVersionSettings.webhookToggle and getgenv().oldTestingVersionSettings.webhookBox then
-		local LogService = Game:GetService("LogService")
+		local LogService = game:GetService("LogService")
 		local logs = LogService:GetLogHistory()
 		--Tries to grabs donation message from logs
 		if string.find(logs[#logs].message, Players.LocalPlayer.DisplayName) then
@@ -724,14 +724,7 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 		end
 	end
 
-	serverWebhook("Someone using one of the free PLS Donate scripts earned: "..tostring(Players.LocalPlayer.leaderstats.Raised.value - RaisedC).." robux!")
-	if getgenv().oldTestingVersionSettings.autoThanks then
-		task.spawn(function()
-			task.wait(getgenv().oldTestingVersionSettings.thanksDelay)
-			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(getgenv().oldTestingVersionSettings.thanksMessage[math.random(#getgenv().oldTestingVersionSettings.thanksMessage)],"All")
-		end)
-	end
-	task.wait(.5)
+	serverWebhook("Someone using one of thee free PLS Donate scripts earned: "..tostring(Players.LocalPlayer.leaderstats.Raised.value - RaisedC).." robux!")
 	if getgenv().oldTestingVersionSettings.autoJump then
 		task.spawn(function()
 			task.wait(getgenv().oldTestingVersionSettings.thanksDelay)
@@ -753,7 +746,13 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 			end
 		end)
 	end
-	
+
+	if getgenv().oldTestingVersionSettings.autoThanks then
+		task.spawn(function()
+			task.wait(getgenv().oldTestingVersionSettings.thanksDelay)
+			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(getgenv().oldTestingVersionSettings.thanksMessage[math.random(#getgenv().oldTestingVersionSettings.thanksMessage)],"All")
+		end)
+	end
 	RaisedC = Players.LocalPlayer.leaderstats.Raised.value
 	task.wait(getgenv().oldTestingVersionSettings.textUpdateDelay)
 	update()
