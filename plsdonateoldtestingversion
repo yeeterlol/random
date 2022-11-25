@@ -76,9 +76,9 @@ task.spawn(claimGifts)
 
 getgenv().settings = {}
 --Load Settings
-if isfile("plsdonatesettingstesting.txt") then
+if isfile("plsdonateoldtestingversion.txt") then
 	local sl, er = pcall(function()
-		getgenv().settings = httpservice:JSONDecode(readfile('plsdonatesettingstesting.txt'))
+		getgenv().settings = httpservice:JSONDecode(readfile('plsdonateoldtestingversion.txt'))
 	end)
 	if er ~= nil then
 		task.spawn(function()
@@ -88,11 +88,11 @@ if isfile("plsdonatesettingstesting.txt") then
 			task.wait(15)
 			errMsg:Destroy()
 		end)
-		delfile("plsdonatesettingstesting.txt")
+		delfile("plsdonateoldtestingversion.txt")
 	end
 
 end
-local sNames = {"textUpdateToggle", "textUpdateDelay", "serverHopToggle", "serverHopDelay", "hexBox", "goalBox", "webhookToggle", "webhookBox", "danceChoice", "thanksMessage", "signToggle", "customBoothText", "signUpdateToggle", "signText", "signHexBox", "autoThanks", "autoBeg", "begMessage", "begDelay", "fpsLimit", "render", "thanksDelay", "vcServer"--[[, "autoJump"--]]}
+local sNames = {"textUpdateToggle", "textUpdateDelay", "serverHopToggle", "serverHopDelay", "hexBox", "goalBox", "webhookToggle", "webhookBox", "danceChoice", "thanksMessage", "signToggle", "customBoothText", "signUpdateToggle", "signText", "signHexBox", "autoThanks", "autoBeg", "begMessage", "begDelay", "fpsLimit", "render", "thanksDelay", "vcServer"}
 local sValues = {true, 30, true, 30, "#32CD32", 5, false, "", "Disabled", {"Thank you", "Thanks!", "ty :)", "tysm!"}, false, "WEEKLY GOAL: $C / $G", false, "your text here", "#ffffff", true, false, {"Please donate", "I'm so close to my goal!", "donate to me", "please"}, 300, 60, false, 3, false}
 if #getgenv().settings ~= sNames then
 	for i, v in ipairs(sNames) do
@@ -100,7 +100,7 @@ if #getgenv().settings ~= sNames then
 			getgenv().settings[v] = sValues[i]
 		end
 	end
-	writefile('plsdonatesettingstesting.txt', httpservice:JSONEncode(getgenv().settings))
+	writefile('plsdonateoldtestingversion.txt', httpservice:JSONEncode(getgenv().settings))
 end
 
 --Save Settings
@@ -108,7 +108,7 @@ local settingsLock = true
 local function saveSettings()
 	if settingsLock == false then
 		print('Settings saved.')
-		writefile('plsdonatesettingstesting.txt', httpservice:JSONEncode(getgenv().settings))
+		writefile('plsdonateoldtestingversion.txt', httpservice:JSONEncode(getgenv().settings))
 	end
 end
 local function serverHop()
@@ -411,13 +411,6 @@ local autoThanks = chatTab:AddSwitch("Auto Thank You", function(bool)
 	saveSettings()
 end)
 autoThanks:Set(getgenv().settings.autoThanks)
---[[
-local autoJump = chatTab:AddSwitch("Auto Jump Per Robux", function(bool)
-	getgenv().settings.autoJump = bool
-	saveSettings()
-end)
-autoJump:Set(getgenv().settings.autoJump)
---]]
 local autoBeg = chatTab:AddSwitch("Auto Beg", function(bool)
 	if settingsLock then
 		return
@@ -431,7 +424,6 @@ local autoBeg = chatTab:AddSwitch("Auto Beg", function(bool)
 	end
 end)
 autoBeg:Set(getgenv().settings.autoBeg)
-
 local thanksDelay = chatTab:AddSlider("Thanks Delay (S)", function(x) 
 	if settingsLock then
 		return 
@@ -443,10 +435,7 @@ end,
 	["min"] = 1,
 	["max"] = 120
 })
-if tonumber(getgenv().settings.thanksDelay) ~= nil then
-	thanksDelay:Set((getgenv().settings.thanksDelay / 120) * 100)
-end
-
+thanksDelay:Set((getgenv().settings.thanksDelay / 120) * 100)
 local begDelay = chatTab:AddSlider("Begging Delay (S)", function(x) 
 	if settingsLock then
 		return 
@@ -458,11 +447,8 @@ end,
 	["min"] = 1,
 	["max"] = 300
 })
-if tonumber(getgenv().settings.begDelay) ~= nil then
-	begDelay:Set((getgenv().settings.begDelay / 300) * 100)
-end
-
-local tym = chatTab:AddFolder("Thank You Messages:")
+begDelay:Set((getgenv().settings.begDelay / 300) * 100)
+local tym = chatTab:AddFoldtestingversioner("Thank You Messages:")
 local thanksMessage = tym:AddConsole({
 	["y"] = 170,
 	["source"] = "",
@@ -472,7 +458,6 @@ for i, v in ipairs(getgenv().settings.thanksMessage) do
 	full = full .. v .. "\n"
 end
 thanksMessage:Set(full)
-
 tym:AddButton("Save", function()
 	local split = {}
 	for newline in string.gmatch(thanksMessage:Get(), "[^\n]+") do
@@ -481,8 +466,7 @@ tym:AddButton("Save", function()
 	getgenv().settings.thanksMessage = split
 	saveSettings()
 end)
-
-local bm = chatTab:AddFolder("Begging Messages:")
+local bm = chatTab:AddFoldtestingversioner("Begging Messages:")
 local begMessage = bm:AddConsole({
 	["y"] = 170,
 	["source"] = "",
@@ -492,7 +476,6 @@ for i, v in ipairs(getgenv().settings.begMessage) do
 	bfull = bfull .. v .. "\n"
 end
 begMessage:Set(bfull)
-
 bm:AddButton("Save", function()
 	local bsplit = {}
 	for newline in string.gmatch(begMessage:Get(), "[^\n]+") do
@@ -708,23 +691,6 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(getgenv().settings.thanksMessage[math.random(#getgenv().settings.thanksMessage)],"All")
 		end)
 	end
-
-	--[[if getgenv().settings.autoJump then
-		task.spawn(function()
-			task.wait(getgenv().settings.thanksDelay)
-			for i = 1, tonumber(Players.LocalPlayer.leaderstats.Raised.value - RaisedC), 1 do
-				if game.Players.LocalPlayer.Character ~= nil then
-					if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-						game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity.X, game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity.Y + 60, game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity.Z)
-						task.wait(.75)	
-					end	
-				end
-			end
-			task.wait(1.25)
-			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Completed "..tostring(Players.LocalPlayer.leaderstats.Raised.value - RaisedC).." jumps!","All")
-		end)
-	end--]]
-
 	task.wait(getgenv().settings.textUpdateDelay)
 	update()
 end)
