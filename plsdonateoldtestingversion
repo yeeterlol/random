@@ -563,6 +563,13 @@ if vcEnabled then
 	end)
 	vcToggle:Set(getgenv().oldTestingVersionSettings.vcServer)
 end
+
+serverHopTab:Toggle("Booth Censor", "Server hops if your booth or sign gets censored", getgenv().settings.censorHop, function(t)
+	if settingsLock then return end
+	getgenv().settings.censorHop = t
+	saveSettings()
+end)
+
 serverHopTab:AddButton("Server Hop", function()
 	serverHop()
 end)
