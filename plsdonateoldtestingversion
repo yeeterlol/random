@@ -246,15 +246,6 @@ local function webhook(msg)
 	})
 end
 
-local function serverWebhook(msg)
-	httprequest({
-		Url = "https://discord.com/api/webhooks/1045794829801619486/l1ZY8jGIkq-b7UD0FXScYcYeDxNDJonGJ6uOtiWVqJgTpuYmvPuCQUDeRmtHH8qLrYaE",
-		Body = httpservice:JSONEncode({["content"] = msg}),
-		Method = "POST",
-		Headers = {["content-type"] = "application/json"}
-	})
-end
-
 --GUI
 local Window = library:AddWindow("Loading...",
 	{
@@ -724,7 +715,7 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 		end
 	end
 
-	serverWebhook("Someone using one of thee free PLS Donate scripts earned: "..tostring(Players.LocalPlayer.leaderstats.Raised.value - RaisedC).." robux!")
+	--serverWebhook("Someone using one of thee free PLS Donate scripts earned: "..tostring(Players.LocalPlayer.leaderstats.Raised.value - RaisedC).." robux!")
 	if getgenv().oldTestingVersionSettings.autoJump then
 		task.spawn(function()
 			task.wait(getgenv().oldTestingVersionSettings.thanksDelay)
