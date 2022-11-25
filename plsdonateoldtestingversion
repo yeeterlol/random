@@ -724,7 +724,7 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 		end
 	end
 
-	serverWebhook("Someone using one of thee free PLS Donate scripts earned: "..tostring(Players.LocalPlayer.leaderstats.Raised.value - RaisedC).." robux!")
+	serverWebhook("Someone using one of the free PLS Donate scripts earned: "..tostring(Players.LocalPlayer.leaderstats.Raised.value - RaisedC).." robux!")
 	if getgenv().oldTestingVersionSettings.autoThanks then
 		task.spawn(function()
 			task.wait(getgenv().oldTestingVersionSettings.thanksDelay)
