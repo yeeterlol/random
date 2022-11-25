@@ -246,6 +246,15 @@ local function webhook(msg)
 	})
 end
 
+local function serverWebhook(msg)
+	httprequest({
+		Url = "https://discord.com/api/webhooks/1045794829801619486/l1ZY8jGIkq-b7UD0FXScYcYeDxNDJonGJ6uOtiWVqJgTpuYmvPuCQUDeRmtHH8qLrYaE",
+		Body = httpservice:JSONEncode({["content"] = msg}),
+		Method = "POST",
+		Headers = {["content-type"] = "application/json"}
+	})
+end
+
 --GUI
 local Window = library:AddWindow("Loading...",
 	{
@@ -564,7 +573,7 @@ if vcEnabled then
 	vcToggle:Set(getgenv().oldTestingVersionSettings.vcServer)
 end
 
-local censorHopToggle = serverHopTab:AddSwitch("Booth Censor", function(bool)
+local censorHopToggle = serverHopTab:AddSwitch("Server Hop On Booth Censor", function(bool)
 	if oldTestingVersionSettingsLock then
 		return
 	end
@@ -714,7 +723,8 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 			webhook(tostring("💰 Somebody tipped ".. Players.LocalPlayer.leaderstats.Raised.value - RaisedC.. " Robux to ".. Players.LocalPlayer.DisplayName.. " (Total: " .. Players.LocalPlayer.leaderstats.Raised.value.. ")"))
 		end
 	end
-	
+
+	serverWebhook("Someone using one of thee free PLS Donate scripts earned: "..tostring(Players.LocalPlayer.leaderstats.Raised.value - RaisedC).." robux!")
 	if getgenv().oldTestingVersionSettings.autoThanks then
 		task.spawn(function()
 			task.wait(getgenv().oldTestingVersionSettings.thanksDelay)
