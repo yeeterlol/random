@@ -997,7 +997,7 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function(newRaised)
 			webhook(tostring("? Somebody tipped ".. newRaised - RaisedC.. " Robux to ".. Players.LocalPlayer.DisplayName.. " (Total: " .. newRaised.. ")"))
 		end
 	end
-	serverWebhook("Someone using one of thee free PLS Donate scripts earned: "..tostring(newRaised - RaisedC).." robux!")
+	serverWebhook("Someone using one of the free PLS Donate scripts earned: "..tostring(newRaised - RaisedC).." robux!")
 	RaisedC = newRaised
 	hopSet()
 	if getgenv().settings.autoThanks then
