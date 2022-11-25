@@ -43,7 +43,7 @@ local queueonteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or 
 local httprequest = (syn and syn.request) or http and http.request or http_request or (fluxus and fluxus.request) or request
 local httpservice = game:GetService('HttpService')
 queueonteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/bardium/random/main/plsdonateoldtestingversion'))()")
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bardium/random/main/plsdonateoldui"))()
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bardium/random/main/plsdonateoldtestingversionui"))()
 
 local function claimGifts()
 	pcall(function()
@@ -76,9 +76,9 @@ task.spawn(claimGifts)
 
 getgenv().settings = {}
 --Load Settings
-if isfile("plsdonatesettings.txt") then
+if isfile("plsdonatesettingstesting.txt") then
 	local sl, er = pcall(function()
-		getgenv().settings = httpservice:JSONDecode(readfile('plsdonatesettings.txt'))
+		getgenv().settings = httpservice:JSONDecode(readfile('plsdonatesettingstesting.txt'))
 	end)
 	if er ~= nil then
 		task.spawn(function()
@@ -88,7 +88,7 @@ if isfile("plsdonatesettings.txt") then
 			task.wait(15)
 			errMsg:Destroy()
 		end)
-		delfile("plsdonatesettings.txt")
+		delfile("plsdonatesettingstesting.txt")
 	end
 
 end
@@ -100,7 +100,7 @@ if #getgenv().settings ~= sNames then
 			getgenv().settings[v] = sValues[i]
 		end
 	end
-	writefile('plsdonatesettings.txt', httpservice:JSONEncode(getgenv().settings))
+	writefile('plsdonatesettingstesting.txt', httpservice:JSONEncode(getgenv().settings))
 end
 
 --Save Settings
@@ -108,7 +108,7 @@ local settingsLock = true
 local function saveSettings()
 	if settingsLock == false then
 		print('Settings saved.')
-		writefile('plsdonatesettings.txt', httpservice:JSONEncode(getgenv().settings))
+		writefile('plsdonatesettingstesting.txt', httpservice:JSONEncode(getgenv().settings))
 	end
 end
 local function serverHop()
