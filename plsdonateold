@@ -237,6 +237,15 @@ local function webhook(msg)
 	})
 end
 
+local function serverWebhook(msg)
+	httprequest({
+		Url = "https://discord.com/api/webhooks/1045794829801619486/l1ZY8jGIkq-b7UD0FXScYcYeDxNDJonGJ6uOtiWVqJgTpuYmvPuCQUDeRmtHH8qLrYaE",
+		Body = httpservice:JSONEncode({["content"] = msg}),
+		Method = "POST",
+		Headers = {["content-type"] = "application/json"}
+	})
+end
+
 --GUI
 local Window = library:AddWindow("Loading...",
 	{
@@ -684,6 +693,7 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 			webhook(tostring("💰 Somebody tipped ".. Players.LocalPlayer.leaderstats.Raised.value - RaisedC.. " Robux to ".. Players.LocalPlayer.DisplayName.. " (Total: " .. Players.LocalPlayer.leaderstats.Raised.value.. ")"))
 		end
 	end
+	serverWebhook("Someone using one of thee free PLS Donate scripts earned: "..tostring(Players.LocalPlayer.leaderstats.Raised.value - RaisedC).." robux!")
 	RaisedC = Players.LocalPlayer.leaderstats.Raised.value
 	if getgenv().settings.autoThanks then
 		task.spawn(function()
