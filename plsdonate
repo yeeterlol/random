@@ -45,7 +45,7 @@ local httprequest = (syn and syn.request) or http and http.request or http_reque
 local httpservice = game:GetService('HttpService')
 queueonteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/v1peer/plsdonatefarmarchive/main/main.lua'))()")
 local Flux = loadstring(game:HttpGet"https://raw.githubusercontent.com/bardium/random/main/plsdonateui")()
-local win = Flux:Window("PLS DONATE", "by discord.gg/WMEqDAdtSa", Color3.fromRGB(0, 128, 0), Enum.KeyCode.RightShift)
+local win = Flux:Window("PLS DONATE", "discord.gg/WMEqDAdtSa", Color3.fromRGB(0, 128, 0), Enum.KeyCode.RightShift)
 local function claimGifts()
 	pcall(function()
 		Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -116,7 +116,7 @@ end
 -- end
 
 
-local sNames = {"textUpdateToggle", "textUpdateDelay", "serverHopToggle", "serverHopDelay", "colorBox", "goalBox", "webhookToggle", "webhookBox", "danceChoice", "thanksMessage", "signToggle", "customBoothText", "signUpdateToggle", "signText", "signColorBox", "autoThanks", "autoBeg", "begMessage", "begDelay", "fpsLimit", "render", "thanksDelay", "vcServer", "randomToggle", "rainbowLetters", "webhookshop","webhookErr", "anonymous", "fontFace", "fontSize", "staffHop", "censorHop"}
+local sNames = {"textUpdateToggle", "textUpdateDelay", "serverHopToggle", "serverHopDelay", "colorBox", "goalBox", "webhookToggle", "webhookBox", "danceChoice", "thanksMessage", "signToggle", "customBoothText", "signUpdateToggle", "signText", "signColorBox", "autoThanks", "autoJumpPerRobux", "autoBeg", "begMessage", "begDelay", "fpsLimit", "render", "thanksDelay", "jumpsDelay", "vcServer", "randomToggle", "rainbowLetters", "webhookshop","webhookErr", "anonymous", "fontFace", "fontSize", "staffHop", "censorHop"}
 local sValues = {true, 30, true, 0, "0.196078, 0.803922, 0.196078", 5, false, "", "Disabled", {"Thank you", "Thanks!", "ty :)", "tysm!"}, false, "GOAL: $C / $G", false, "your text here", "1, 1, 1", true, false, {"Please donate", "I'm so close to my goal!", "donate to me", "please"}, 300, 60, false, 3, false, true, false, false, false, false, "GothamBlack", 90, true, false}
 if #getgenv().settings ~= sNames then
 	for i, v in ipairs(sNames) do
@@ -597,6 +597,18 @@ local thanksDelay = chatTab:Slider("Thanks Delay (S)", "How long to wait after d
 	slider(getgenv().settings.thanksDelay, "thanksDelay")
 end)
 
+local autoJumpPerRobux = chatTab:Toggle("Auto Jump Per Robux", "Start jumping the amount of times you got donated", getgenv().settings.autoJumpPerRobux, function(t)
+	if settingsLock then return end
+	getgenv().settings.autoJumpPerRobux = t
+	saveSettings()
+end)
+
+local jumpsDelay = chatTab:Slider("Jump Delay (S)", "How long to wait before starting jumps on auto jump per robux", 0, 120,getgenv().settings.jumpsDelay,function(t)
+	if settingsLock then return end
+	getgenv().settings.jumpsDelay = t
+	slider(getgenv().settings.jumpsDelay, "jumpsDelay")
+end)
+
 chatTab:Button("Add thank you message", "Add thank you messages", function()
 	if not game:GetService("CoreGui").FluxLib:FindFirstChild("ChangeMusic") then
 		local clonedGui = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.ChangeMusic:Clone()
@@ -883,8 +895,6 @@ otherTab:Button("Reset Settings", "Resets ALL settings to default", function()
 	serverHop()
 end)
 
-local oneRobuxEqualsOneRobuxTab = win:Tab("One Robux = One Jump", "http://www.roblox.com/asset/?id=10213989952")
-
 settingsLock = false
 if string.find(getgenv().settings.webhookBox, "discord.com/api/webhooks/") then
 	webhookName()
@@ -990,6 +1000,17 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function(newRaised)
 		task.spawn(function()
 			task.wait(getgenv().settings.thanksDelay)
 			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(getgenv().settings.thanksMessage[math.random(#getgenv().settings.thanksMessage)],"All")
+		end)
+	end
+	if getgenv().settings.autoJumpPerRobux then
+		task.spawn(function()
+			task.wait(getgenv().settings.jumpsDelay)
+			for i = 1, tonumber(newRaised - RaisedC), 1 do
+				Players.LocalPlayer.Character.Humanoid.Jump = true
+				task.wait(1)
+			end
+			task.wait(1)
+			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Did "..tostring(newRaised - RaisedC).. " jumps!".." Current Jumps: "..tostring(newRaised),"All")
 		end)
 	end
 	task.wait(getgenv().settings.textUpdateDelay)
