@@ -74,17 +74,17 @@ end
 task.spawn(claimGifts)
 
 
-getgenv().settings = {}
---Load Settings
+getgenv().oldTestingVersionSettings = {}
+--Load oldTestingVersionSettings
 if isfile("plsdonateoldtestingversion.txt") then
 	local sl, er = pcall(function()
-		getgenv().settings = httpservice:JSONDecode(readfile('plsdonateoldtestingversion.txt'))
+		getgenv().oldTestingVersionSettings = httpservice:JSONDecode(readfile('plsdonateoldtestingversion.txt'))
 	end)
 	if er ~= nil then
 		task.spawn(function()
 			errMsg = Instance.new("Hint")
 			errMsg.Parent = game.workspace
-			errMsg.Text = tostring("Settings reset due to error: ".. er)
+			errMsg.Text = tostring("oldTestingVersionSettings reset due to error: ".. er)
 			task.wait(15)
 			errMsg:Destroy()
 		end)
@@ -94,26 +94,26 @@ if isfile("plsdonateoldtestingversion.txt") then
 end
 local sNames = {"textUpdateToggle", "textUpdateDelay", "serverHopToggle", "serverHopDelay", "hexBox", "goalBox", "webhookToggle", "webhookBox", "danceChoice", "thanksMessage", "signToggle", "customBoothText", "signUpdateToggle", "signText", "signHexBox", "autoThanks", "autoBeg", "begMessage", "begDelay", "fpsLimit", "render", "thanksDelay", "vcServer"}
 local sValues = {true, 30, true, 30, "#32CD32", 5, false, "", "Disabled", {"Thank you", "Thanks!", "ty :)", "tysm!"}, false, "WEEKLY GOAL: $C / $G", false, "your text here", "#ffffff", true, false, {"Please donate", "I'm so close to my goal!", "donate to me", "please"}, 300, 60, false, 3, false}
-if #getgenv().settings ~= sNames then
+if #getgenv().oldTestingVersionSettings ~= sNames then
 	for i, v in ipairs(sNames) do
-		if getgenv().settings[v] == nil then
-			getgenv().settings[v] = sValues[i]
+		if getgenv().oldTestingVersionSettings[v] == nil then
+			getgenv().oldTestingVersionSettings[v] = sValues[i]
 		end
 	end
-	writefile('plsdonateoldtestingversion.txt', httpservice:JSONEncode(getgenv().settings))
+	writefile('plsdonateoldtestingversion.txt', httpservice:JSONEncode(getgenv().oldTestingVersionSettings))
 end
 
---Save Settings
-local settingsLock = true
-local function saveSettings()
-	if settingsLock == false then
-		print('Settings saved.')
-		writefile('plsdonateoldtestingversion.txt', httpservice:JSONEncode(getgenv().settings))
+--Save oldTestingVersionSettings
+local oldTestingVersionSettingsLock = true
+local function saveoldTestingVersionSettings()
+	if oldTestingVersionSettingsLock == false then
+		print('oldTestingVersionSettings saved.')
+		writefile('plsdonateoldtestingversion.txt', httpservice:JSONEncode(getgenv().oldTestingVersionSettings))
 	end
 end
 local function serverHop()
 	local gameId = "8737602449"
-	if vcEnabled and getgenv().settings.vcServer then
+	if vcEnabled and getgenv().oldTestingVersionSettings.vcServer then
 		gameId = "8943844393"
 	end
 	local servers = {}
@@ -135,7 +135,7 @@ local function serverHop()
 end
 
 local function waitServerHop()
-	task.wait(getgenv().settings.serverHopDelay * 60)
+	task.wait(getgenv().oldTestingVersionSettings.serverHopDelay * 60)
 	serverHop()
 end
 
@@ -143,7 +143,7 @@ local function hopSet()
 	if hopTimer then
 		task.cancel(hopTimer)
 	end
-	if getgenv().settings.serverHopToggle then
+	if getgenv().oldTestingVersionSettings.serverHopToggle then
 		hopTimer = task.spawn(waitServerHop)
 	end
 end
@@ -156,15 +156,15 @@ local function slider(value, whichSlider)
 	end
 	sliderInProgress = true
 	task.wait(5)
-	if getgenv().settings[whichSlider] == value then
-		saveSettings()
+	if getgenv().oldTestingVersionSettings[whichSlider] == value then
+		saveoldTestingVersionSettings()
 		sliderInProgress = false;
 		if whichSlider == "serverHopDelay" then
 			hopSet()
 		end
 	else
 		sliderInProgress = false;
-		return slider(getgenv().settings[whichSlider], whichSlider)
+		return slider(getgenv().oldTestingVersionSettings[whichSlider], whichSlider)
 	end
 end
 
@@ -172,7 +172,7 @@ end
 local function update()
 	local text
 	local current = Players.LocalPlayer.leaderstats.Raised.Value
-	local goal = current + tonumber(getgenv().settings.goalBox)
+	local goal = current + tonumber(getgenv().oldTestingVersionSettings.goalBox)
 	if goal == 420 or goal == 425 then
 		goal = goal + 10
 	end
@@ -180,7 +180,7 @@ local function update()
 		current = current + 10
 	end
 	if goal > 999 then
-		if tonumber(getgenv().settings.goalBox) < 10 then
+		if tonumber(getgenv().oldTestingVersionSettings.goalBox) < 10 then
 			goal = string.format("%.2fk", (current + 10) / 10 ^ 3)
 		else
 			goal = string.format("%.2fk", (goal) / 10 ^ 3)
@@ -189,10 +189,10 @@ local function update()
 	if current > 999 then
 		current = string.format("%.2fk", current / 10 ^ 3)
 	end
-	if getgenv().settings.textUpdateToggle and getgenv().settings.customBoothText then
-		text = string.gsub(getgenv().settings.customBoothText, "$C", current)
+	if getgenv().oldTestingVersionSettings.textUpdateToggle and getgenv().oldTestingVersionSettings.customBoothText then
+		text = string.gsub(getgenv().oldTestingVersionSettings.customBoothText, "$C", current)
 		text = string.gsub (text, "$G", goal)
-		boothText = tostring('<font color="'.. getgenv().settings.hexBox.. '">'.. text.. '</font>')
+		boothText = tostring('<font color="'.. getgenv().oldTestingVersionSettings.hexBox.. '">'.. text.. '</font>')
 		--Updates the booth text
 		local myBooth = Players.LocalPlayer.PlayerGui.MapUIContainer.MapUI.BoothUI:FindFirstChild(tostring("BoothUI".. unclaimed[1]))
 		if myBooth.Sign.TextLabel.Text ~= boothText then
@@ -204,12 +204,12 @@ local function update()
 			task.wait(3)
 		end
 	end
-	if getgenv().settings.signToggle and getgenv().settings.signUpdateToggle and getgenv().settings.signText and signPass then
+	if getgenv().oldTestingVersionSettings.signToggle and getgenv().oldTestingVersionSettings.signUpdateToggle and getgenv().oldTestingVersionSettings.signText and signPass then
 		local currentSign = game.Players.LocalPlayer.Character.DonateSign.TextSign.SurfaceGui.TextLabel.Text
 
-		text = string.gsub(getgenv().settings.signText, "$C", current)
+		text = string.gsub(getgenv().oldTestingVersionSettings.signText, "$C", current)
 		text = string.gsub (text, "$G", goal)
-		signText = tostring('<font color="'.. getgenv().settings.signHexBox.. '">'.. text.. '</font>')
+		signText = tostring('<font color="'.. getgenv().oldTestingVersionSettings.signHexBox.. '">'.. text.. '</font>')
 
 		if currentSign ~= signText then
 			if string.find(currentSign, "# #") or string.find(currentSign, "##") then
@@ -222,15 +222,15 @@ local function update()
 end
 
 local function begging()
-	while getgenv().settings.autoBeg do
-		game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(getgenv().settings.begMessage[math.random(#getgenv().settings.begMessage)],"All")
-		task.wait(getgenv().settings.begDelay)
+	while getgenv().oldTestingVersionSettings.autoBeg do
+		game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(getgenv().oldTestingVersionSettings.begMessage[math.random(#getgenv().oldTestingVersionSettings.begMessage)],"All")
+		task.wait(getgenv().oldTestingVersionSettings.begDelay)
 	end
 end
 
 local function webhook(msg)
 	httprequest({
-		Url = getgenv().settings.webhookBox,
+		Url = getgenv().oldTestingVersionSettings.webhookBox,
 		Body = httpservice:JSONEncode({["content"] = msg}),
 		Method = "POST",
 		Headers = {["content-type"] = "application/json"}
@@ -250,87 +250,86 @@ local chatTab = Window:AddTab("Chat")
 local webhookTab = Window:AddTab("Webhook")
 local serverHopTab = Window:AddTab("Server")
 local otherTab = Window:AddTab("Other")
-local oneRobuxOneJump = Window:AddTab("OneRobuxOneJump")
 
---Booth Settings
+--Booth oldTestingVersionSettings
 local textUpdateToggle = boothTab:AddSwitch("Text Update", function(bool)
-	if settingsLock then
+	if oldTestingVersionSettingsLock then
 		return
 	end
-	getgenv().settings.textUpdateToggle = bool
-	saveSettings()
+	getgenv().oldTestingVersionSettings.textUpdateToggle = bool
+	saveoldTestingVersionSettings()
 	if bool then
 		update()
 	end
 end)
-textUpdateToggle:Set(getgenv().settings.textUpdateToggle)
+textUpdateToggle:Set(getgenv().oldTestingVersionSettings.textUpdateToggle)
 task.wait(12.5)
 local textUpdateDelay = boothTab:AddSlider("Text Update Delay (S)", function(x) 
-	if settingsLock then
+	if oldTestingVersionSettingsLock then
 		return 
 	end
-	getgenv().settings.textUpdateDelay = x
-	coroutine.wrap(slider)(getgenv().settings.textUpdateDelay, "textUpdateDelay")
+	getgenv().oldTestingVersionSettings.textUpdateDelay = x
+	coroutine.wrap(slider)(getgenv().oldTestingVersionSettings.textUpdateDelay, "textUpdateDelay")
 end,
 {
 	["min"] = 0,
 	["max"] = 120
 })
 
-textUpdateDelay:Set((getgenv().settings.textUpdateDelay / 120) * 100)
+textUpdateDelay:Set((getgenv().oldTestingVersionSettings.textUpdateDelay / 120) * 100)
 boothTab:AddLabel("Text Color:")
 local hexBox = boothTab:AddTextBox("Hex Codes Only", function(text)
-	if settingsLock then
+	if oldTestingVersionSettingsLock then
 		return
 	end
 	local success = pcall(function()
 		return Color3.fromHex(text)
 	end)
 	if success and string.find(text, "#") then
-		getgenv().settings.hexBox = text
-		saveSettings()
+		getgenv().oldTestingVersionSettings.hexBox = text
+		saveoldTestingVersionSettings()
 		update()
 	end
 end,
 {
 	["clear"] = false
 })
-hexBox.Text = getgenv().settings.hexBox
+hexBox.Text = getgenv().oldTestingVersionSettings.hexBox
 boothTab:AddLabel("Goal Increase:")
 local goalBox = boothTab:AddTextBox("Numbers Only", function(text)
 	if tonumber(text) then
-		getgenv().settings.goalBox = tonumber(text)
-		saveSettings()
+		getgenv().oldTestingVersionSettings.goalBox = tonumber(text)
+		saveoldTestingVersionSettings()
 		update()
 	end
 end,
 {
 	["clear"] = false
 })
-goalBox.Text = getgenv().settings.goalBox
+goalBox.Text = getgenv().oldTestingVersionSettings.goalBox
 boothTab:AddLabel("Custom Booth Text:")
 local customBoothText = boothTab:AddConsole({
 	["y"] = 50,
 	["source"] = "",
 })
-customBoothText:Set(getgenv().settings.customBoothText)
+customBoothText:Set(getgenv().oldTestingVersionSettings.customBoothText)
 boothTab:AddButton("Save", function()
 	if #customBoothText:Get() > 221 then
 		return customBoothText:Set("221 Character Limit")
 	end
-	if settingsLock then
+	if oldTestingVersionSettingsLock then
 		return
 	end
 	if customBoothText:Get() then
-		getgenv().settings.customBoothText = customBoothText:Get()
-		saveSettings()
+		getgenv().oldTestingVersionSettings.customBoothText = customBoothText:Get()
+		saveoldTestingVersionSettings()
 		update()
 	end
 end)
 local helpLabel = boothTab:AddLabel("$C = Current, $G = Goal, 221 Character Limit")
 helpLabel.TextSize = 9
 helpLabel.TextXAlignment = Enum.TextXAlignment.Center
---Sign Settings
+--Sign oldTestingVersionSettings
 pcall(function()
 	if game:GetService("MarketplaceService"):UserOwnsGamePassAsync(Players.LocalPlayer.UserId, 28460459) then
 		signPass = true
@@ -338,38 +337,38 @@ pcall(function()
 end)
 if signPass then
 	local signToggle = signTab:AddSwitch("Equip Sign", function(bool)
-		getgenv().settings.signToggle = bool
-		saveSettings()
+		getgenv().oldTestingVersionSettings.signToggle = bool
+		saveoldTestingVersionSettings()
 		if bool then
 			Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):EquipTool(Players.LocalPlayer.Backpack:FindFirstChild("DonateSign"))
 		else
 			Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):UnequipTools(Players.LocalPlayer.Backpack:FindFirstChild("DonateSign"))       
 		end
 	end)
-	signToggle:Set(getgenv().settings.signToggle)
+	signToggle:Set(getgenv().oldTestingVersionSettings.signToggle)
 	local signUpdateToggle = signTab:AddSwitch("Text Update", function(bool)
-		if settingsLock then
+		if oldTestingVersionSettingsLock then
 			return
 		end
-		getgenv().settings.signUpdateToggle = bool
-		saveSettings()
+		getgenv().oldTestingVersionSettings.signUpdateToggle = bool
+		saveoldTestingVersionSettings()
 		if bool then
 			update()
 		end
 	end)
-	signUpdateToggle:Set(getgenv().settings.signUpdateToggle)
+	signUpdateToggle:Set(getgenv().oldTestingVersionSettings.signUpdateToggle)
 	signTab:AddLabel("Text Color:")
 	local signHexBox = signTab:AddTextBox("Hex Codes Only", function(text)
-		if settingsLock then
+		if oldTestingVersionSettingsLock then
 			return
 		end
 		local success = pcall(function()
 			return Color3.fromHex(text)
 		end)
 		if success and string.find(text, "#") then
-			getgenv().settings.signHexBox = text
-			saveSettings()
-			if getgenv().settings.signUpdateToggle and getgenv().settings.signText then
+			getgenv().oldTestingVersionSettings.signHexBox = text
+			saveoldTestingVersionSettings()
+			if getgenv().oldTestingVersionSettings.signUpdateToggle and getgenv().oldTestingVersionSettings.signText then
 				update()
 			end
 		end
@@ -377,23 +376,23 @@ if signPass then
 	{
 		["clear"] = false
 	})
-	signHexBox.Text = getgenv().settings.signHexBox
+	signHexBox.Text = getgenv().oldTestingVersionSettings.signHexBox
 	signTab:AddLabel("Sign Text:")
 	local signText = signTab:AddConsole({
 		["y"] = 50,
 		["source"] = "",
 	})
-	signText:Set(getgenv().settings.signText)
+	signText:Set(getgenv().oldTestingVersionSettings.signText)
 	signTab:AddButton("Save", function()
 		if #signText:Get() > 221 then
 			return signText:Set("221 Character Limit")
 		end
-		if settingsLock then
+		if oldTestingVersionSettingsLock then
 			return
 		end
 		if signText:Get() then
-			getgenv().settings.signText = signText:Get()
-			saveSettings()
+			getgenv().oldTestingVersionSettings.signText = signText:Get()
+			saveoldTestingVersionSettings()
 			update()
 		end
 	end)
@@ -405,56 +404,56 @@ else
 	signTab:AddLabel('Requires Sign Gamepass')
 end
 
---Chat Settings
+--Chat oldTestingVersionSettings
 local autoThanks = chatTab:AddSwitch("Auto Thank You", function(bool)
-	getgenv().settings.autoThanks = bool
-	saveSettings()
+	getgenv().oldTestingVersionSettings.autoThanks = bool
+	saveoldTestingVersionSettings()
 end)
-autoThanks:Set(getgenv().settings.autoThanks)
+autoThanks:Set(getgenv().oldTestingVersionSettings.autoThanks)
 local autoBeg = chatTab:AddSwitch("Auto Beg", function(bool)
-	if settingsLock then
+	if oldTestingVersionSettingsLock then
 		return
 	end
-	getgenv().settings.autoBeg = bool
-	saveSettings()
+	getgenv().oldTestingVersionSettings.autoBeg = bool
+	saveoldTestingVersionSettings()
 	if bool then
 		spamming = task.spawn(begging)
 	else
 		task.cancel(spamming)
 	end
 end)
-autoBeg:Set(getgenv().settings.autoBeg)
+autoBeg:Set(getgenv().oldTestingVersionSettings.autoBeg)
 local thanksDelay = chatTab:AddSlider("Thanks Delay (S)", function(x) 
-	if settingsLock then
+	if oldTestingVersionSettingsLock then
 		return 
 	end
-	getgenv().settings.thanksDelay = x
-	coroutine.wrap(slider)(getgenv().settings.thanksDelay, "thanksDelay")
+	getgenv().oldTestingVersionSettings.thanksDelay = x
+	coroutine.wrap(slider)(getgenv().oldTestingVersionSettings.thanksDelay, "thanksDelay")
 end,
 {
 	["min"] = 1,
 	["max"] = 120
 })
-thanksDelay:Set((getgenv().settings.thanksDelay / 120) * 100)
+thanksDelay:Set((getgenv().oldTestingVersionSettings.thanksDelay / 120) * 100)
 local begDelay = chatTab:AddSlider("Begging Delay (S)", function(x) 
-	if settingsLock then
+	if oldTestingVersionSettingsLock then
 		return 
 	end
-	getgenv().settings.begDelay = x
-	coroutine.wrap(slider)(getgenv().settings.begDelay, "begDelay")
+	getgenv().oldTestingVersionSettings.begDelay = x
+	coroutine.wrap(slider)(getgenv().oldTestingVersionSettings.begDelay, "begDelay")
 end,
 {
 	["min"] = 1,
 	["max"] = 300
 })
-begDelay:Set((getgenv().settings.begDelay / 300) * 100)
-local tym = chatTab:AddFoldtestingversioner("Thank You Messages:")
+begDelay:Set((getgenv().oldTestingVersionSettings.begDelay / 300) * 100)
+local tym = chatTab:AddFolder("Thank You Messages:")
 local thanksMessage = tym:AddConsole({
 	["y"] = 170,
 	["source"] = "",
 })
 local full = ''
-for i, v in ipairs(getgenv().settings.thanksMessage) do
+for i, v in ipairs(getgenv().oldTestingVersionSettings.thanksMessage) do
 	full = full .. v .. "\n"
 end
 thanksMessage:Set(full)
@@ -463,16 +462,16 @@ tym:AddButton("Save", function()
 	for newline in string.gmatch(thanksMessage:Get(), "[^\n]+") do
 		table.insert(split, newline)
 	end
-	getgenv().settings.thanksMessage = split
-	saveSettings()
+	getgenv().oldTestingVersionSettings.thanksMessage = split
+	saveoldTestingVersionSettings()
 end)
-local bm = chatTab:AddFoldtestingversioner("Begging Messages:")
+local bm = chatTab:AddFolder("Begging Messages:")
 local begMessage = bm:AddConsole({
 	["y"] = 170,
 	["source"] = "",
 })
 local bfull = ''
-for i, v in ipairs(getgenv().settings.begMessage) do
+for i, v in ipairs(getgenv().oldTestingVersionSettings.begMessage) do
 	bfull = bfull .. v .. "\n"
 end
 begMessage:Set(bfull)
@@ -481,84 +480,84 @@ bm:AddButton("Save", function()
 	for newline in string.gmatch(begMessage:Get(), "[^\n]+") do
 		table.insert(bsplit, newline)
 	end
-	getgenv().settings.begMessage = bsplit
-	saveSettings()
+	getgenv().oldTestingVersionSettings.begMessage = bsplit
+	saveoldTestingVersionSettings()
 end)
 
 
---Webhook Settings
+--Webhook oldTestingVersionSettings
 local webhookToggle = webhookTab:AddSwitch("Discord Webhook Notifications", function(bool)
-	getgenv().settings.webhookToggle = bool
-	saveSettings()
+	getgenv().oldTestingVersionSettings.webhookToggle = bool
+	saveoldTestingVersionSettings()
 end)
-webhookToggle:Set(getgenv().settings.webhookToggle)
+webhookToggle:Set(getgenv().oldTestingVersionSettings.webhookToggle)
 local webhookBox = webhookTab:AddTextBox("Webhook URL", function(text)
 	if string.find(text, "https://discord.com/api/webhooks/") then
-		getgenv().settings.webhookBox = text;
-		saveSettings()
+		getgenv().oldTestingVersionSettings.webhookBox = text;
+		saveoldTestingVersionSettings()
 	end
 end,
 {
 	["clear"] = false
 })
-webhookBox.Text = getgenv().settings.webhookBox
+webhookBox.Text = getgenv().oldTestingVersionSettings.webhookBox
 webhookTab:AddLabel('Press Enter to Save')
 webhookTab:AddButton("Test", function()
-	if getgenv().settings.webhookBox then
+	if getgenv().oldTestingVersionSettings.webhookBox then
 		webhook("Sent from PLS DONATE!!")
 	end
 end)
 
 
---Server Hop Settings
+--Server Hop oldTestingVersionSettings
 pcall(function()
 	if game:GetService("VoiceChatService"):IsVoiceEnabledForUserIdAsync(Players.LocalPlayer.UserId) then
 		vcEnabled = true
 	end
 end)
 local serverHopToggle = serverHopTab:AddSwitch("Auto Server Hop", function(bool)
-	if settingsLock then
+	if oldTestingVersionSettingsLock then
 		return
 	end
-	getgenv().settings.serverHopToggle = bool
+	getgenv().oldTestingVersionSettings.serverHopToggle = bool
 	hopSet()
-	saveSettings()
+	saveoldTestingVersionSettings()
 end)
-serverHopToggle:Set(getgenv().settings.serverHopToggle)
+serverHopToggle:Set(getgenv().oldTestingVersionSettings.serverHopToggle)
 local serverHopDelay = serverHopTab:AddSlider("Server Hop Delay (M)", function(x)
-	if settingsLock then
+	if oldTestingVersionSettingsLock then
 		return 
 	end
-	getgenv().settings.serverHopDelay = x
-	coroutine.wrap(slider)(getgenv().settings.serverHopDelay, "serverHopDelay")
+	getgenv().oldTestingVersionSettings.serverHopDelay = x
+	coroutine.wrap(slider)(getgenv().oldTestingVersionSettings.serverHopDelay, "serverHopDelay")
 end,
 {
 	["min"] = 1,
 	["max"] = 120
 })
-serverHopDelay:Set((getgenv().settings.serverHopDelay / 120) * 100)
+serverHopDelay:Set((getgenv().oldTestingVersionSettings.serverHopDelay / 120) * 100)
 serverHopTab:AddLabel("Timer resets after donation")
 if vcEnabled then
 	local vcToggle = serverHopTab:AddSwitch("Voice Chat Servers", function(bool)
-		if settingsLock then
+		if oldTestingVersionSettingsLock then
 			return
 		end
-		getgenv().settings.vcServer = bool
-		saveSettings()
+		getgenv().oldTestingVersionSettings.vcServer = bool
+		saveoldTestingVersionSettings()
 	end)
-	vcToggle:Set(getgenv().settings.vcServer)
+	vcToggle:Set(getgenv().oldTestingVersionSettings.vcServer)
 end
 serverHopTab:AddButton("Server Hop", function()
 	serverHop()
 end)
 --Other tab
 otherTab:AddLabel('Dance:')
-local danceDropdown = otherTab:AddDropdown("[ ".. getgenv().settings.danceChoice.. " ]", function(object)
-	if settingsLock then
+local danceDropdown = otherTab:AddDropdown("[ ".. getgenv().oldTestingVersionSettings.danceChoice.. " ]", function(object)
+	if oldTestingVersionSettingsLock then
 		return
 	end
-	getgenv().settings.danceChoice = object
-	saveSettings()
+	getgenv().oldTestingVersionSettings.danceChoice = object
+	saveoldTestingVersionSettings()
 	if object == "Disabled" then
 		Players:Chat("/e wave")
 	elseif object == "1" then
@@ -572,35 +571,35 @@ danceDropdown:Add("1")
 danceDropdown:Add("2")
 danceDropdown:Add("3")
 local render = otherTab:AddSwitch("Disable Rendering", function(bool)
-	getgenv().settings.render = bool
-	saveSettings()
+	getgenv().oldTestingVersionSettings.render = bool
+	saveoldTestingVersionSettings()
 	if bool then
 		game:GetService("RunService"):Set3dRenderingEnabled(false)
 	else
 		game:GetService("RunService"):Set3dRenderingEnabled(true)
 	end
 end)
-render:Set(getgenv().settings.render)
+render:Set(getgenv().oldTestingVersionSettings.render)
 if setfpscap and type(setfpscap) == "function" then
 	local fpsLimit = otherTab:AddSlider("FPS Limit", function(x)
-		if settingsLock then
+		if oldTestingVersionSettingsLock then
 			return 
 		end
-		getgenv().settings.fpsLimit = x
+		getgenv().oldTestingVersionSettings.fpsLimit = x
 		setfpscap(x)
-		coroutine.wrap(slider)(getgenv().settings.fpsLimit, "fpsLimit")
+		coroutine.wrap(slider)(getgenv().oldTestingVersionSettings.fpsLimit, "fpsLimit")
 	end,
 	{
 		["min"] = 1,
 		["max"] = 60
 	})
-	fpsLimit:Set((getgenv().settings.fpsLimit / 60) * 100)
-	setfpscap(getgenv().settings.fpsLimit)
+	fpsLimit:Set((getgenv().oldTestingVersionSettings.fpsLimit / 60) * 100)
+	setfpscap(getgenv().oldTestingVersionSettings.fpsLimit)
 end
 
 boothTab:Show()
 library:FormatWindows()
-settingsLock = false
+oldTestingVersionSettingsLock = false
 
 --Finds unclaimed booths
 local function findUnclaimed()
@@ -660,21 +659,21 @@ Controls:Enable()
 noclipper:Disconnect()
 Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(Players.LocalPlayer.Character.HumanoidRootPart.Position, Vector3.new(40, 14, 101)))
 require(game.ReplicatedStorage.Remotes).Event("RefreshItems"):InvokeServer()
-if getgenv().settings.danceChoice == "1" then
+if getgenv().oldTestingVersionSettings.danceChoice == "1" then
 	task.wait(.25)
 	Players:Chat("/e dance")
 else
 	task.wait(.25)
-	Players:Chat("/e dance".. getgenv().settings.danceChoice)
+	Players:Chat("/e dance".. getgenv().oldTestingVersionSettings.danceChoice)
 end
 
-if getgenv().settings.autoBeg then
+if getgenv().oldTestingVersionSettings.autoBeg then
 	spamming = task.spawn(begging)
 end
 local RaisedC = Players.LocalPlayer.leaderstats.Raised.value
 Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 	hopSet()
-	if getgenv().settings.webhookToggle and getgenv().settings.webhookBox then
+	if getgenv().oldTestingVersionSettings.webhookToggle and getgenv().oldTestingVersionSettings.webhookBox then
 		local LogService = Game:GetService("LogService")
 		local logs = LogService:GetLogHistory()
 		--Tries to grabs donation message from logs
@@ -685,20 +684,20 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 		end
 	end
 	RaisedC = Players.LocalPlayer.leaderstats.Raised.value
-	if getgenv().settings.autoThanks then
+	if getgenv().oldTestingVersionSettings.autoThanks then
 		task.spawn(function()
-			task.wait(getgenv().settings.thanksDelay)
-			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(getgenv().settings.thanksMessage[math.random(#getgenv().settings.thanksMessage)],"All")
+			task.wait(getgenv().oldTestingVersionSettings.thanksDelay)
+			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(getgenv().oldTestingVersionSettings.thanksMessage[math.random(#getgenv().oldTestingVersionSettings.thanksMessage)],"All")
 		end)
 	end
-	task.wait(getgenv().settings.textUpdateDelay)
+	task.wait(getgenv().oldTestingVersionSettings.textUpdateDelay)
 	update()
 end)
 update()
 if game:GetService("CoreGui").imgui.Windows.Window.Title.Text == "Loading..." then
 	game:GetService("CoreGui").imgui.Windows.Window.Title.Text = "PLS DONATE - Goose Better#9356"
 end
-while task.wait(getgenv().settings.serverHopDelay * 60) do
+while task.wait(getgenv().oldTestingVersionSettings.serverHopDelay * 60) do
 	if not hopTimer then
 		hopSet()
 	end
