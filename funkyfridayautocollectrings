@@ -28,6 +28,8 @@ while task.wait() do
         end
     end
     if (#transparentParts) > 160 then
+        local queueonteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+        queueonteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/bardium/random/main/funkyfridayautocollectrings'))()")
     	local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
     	if httprequest then
     		local servers = {}
