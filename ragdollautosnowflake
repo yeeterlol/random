@@ -3,6 +3,10 @@ if not game:IsLoaded() then
 end
 if game.PlaceId ~= 5945728589 then
 	game:GetService("TeleportService"):Teleport(5945728589, game.Players.LocalPlayer)
+	local queueonteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+	if queueonteleport then
+		queueonteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/bardium/random/main/ragdollautosnowflake'))()")
+	end
 end
 
 repeat task.wait(.25) until game.Players.LocalPlayer ~= nil
@@ -28,6 +32,10 @@ for i = 0, 10, 1 do
 	end
 end
 while task.wait() do
+	local queueonteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+	if queueonteleport then
+		queueonteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/bardium/random/main/ragdollautosnowflake'))()")
+	end
 	local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 	if httprequest then
 		local servers = {}
