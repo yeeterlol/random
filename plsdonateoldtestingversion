@@ -527,9 +527,7 @@ end)
 
 --Server Hop oldTestingVersionSettings
 pcall(function()
-	if game:GetService("VoiceChatService"):IsVoiceEnabledForUserIdAsync(Players.LocalPlayer.UserId) then
-		vcEnabled = true
-	end
+	vcEnabled = true
 end)
 local serverHopToggle = serverHopTab:AddSwitch("Auto Server Hop", function(bool)
 	if oldTestingVersionSettingsLock then
