@@ -323,9 +323,6 @@ local customBoothText = boothTab:AddConsole({
 })
 customBoothText:Set(getgenv().oldTestingVersionSettings.customBoothText)
 boothTab:AddButton("Save", function()
-	if #customBoothText:Get() > 221 then
-		return customBoothText:Set("221 Character Limit")
-	end
 	if oldTestingVersionSettingsLock then
 		return
 	end
@@ -335,7 +332,7 @@ boothTab:AddButton("Save", function()
 		update()
 	end
 end)
-local helpLabel = boothTab:AddLabel("$C = Current, $G = Goal, 221 Character Limit")
+local helpLabel = boothTab:AddLabel("$C = Current, $G = Goal")
 helpLabel.TextSize = 9
 helpLabel.TextXAlignment = Enum.TextXAlignment.Center
 --Sign oldTestingVersionSettings
