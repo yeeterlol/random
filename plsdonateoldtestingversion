@@ -770,7 +770,7 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(getgenv().oldTestingVersionSettings.deathMessage[math.random(#getgenv().oldTestingVersionSettings.deathMessage)],"All")
             task.wait(3)
             Humanoid.Health = 0
-            task.wait(3)
+            task.wait(10)
             game:GetService('VirtualInputManager'):SendKeyEvent(true, "LeftControl", false, game)
             local Controls = require(Players.LocalPlayer.PlayerScripts:WaitForChild("PlayerModule")):GetControls()
             Controls:Disable()
