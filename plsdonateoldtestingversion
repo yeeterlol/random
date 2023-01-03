@@ -15,6 +15,10 @@ else
 end
 --Anti-AFK
 local Players = game:GetService("Players")
+local LocalPlayer = game:GetService("Players").LocalPlayer;
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait();
+local Humanoid = Character:WaitForChild("Humanoid") or Character:FindFirstChildOfClass("Humanoid");
+
 local connections = getconnections or get_signal_cons
 if connections then
 	for i,v in pairs(connections(Players.LocalPlayer.Idled)) do
@@ -92,8 +96,8 @@ if isfile("plsdonateoldtestingversion.txt") then
 	end
 
 end
-local sNames = {"textUpdateToggle", "textUpdateDelay", "serverHopToggle", "serverHopDelay", "hexBox", "goalBox", "webhookToggle", "webhookBox", "danceChoice", "thanksMessage", "signToggle", "customBoothText", "signUpdateToggle", "signText", "signHexBox", "autoThanks", "autoBeg", "begMessage", "begDelay", "fpsLimit", "render", "thanksDelay", "vcServer", "autoJump", "censorHop"}
-local sValues = {true, 30, true, 30, "#32CD32", 5, false, "", "Disabled", {"Thank you", "Thanks!", "ty :)", "tysm!"}, false, "WEEKLY GOAL: $C / $G", false, "your text here", "#ffffff", true, false, {"Please donate", "I'm so close to my goal!", "donate to me", "please"}, 300, 60, false, 3, false}
+local sNames = {"textUpdateToggle", "textUpdateDelay", "serverHopToggle", "serverHopDelay", "hexBox", "goalBox", "webhookToggle", "webhookBox", "danceChoice", "thanksMessage", "signToggle", "customBoothText", "signUpdateToggle", "signText", "signHexBox", "autoThanks", "autoBeg", "begMessage", "begDelay", "fpsLimit", "render", "thanksDelay", "vcServer", "autoJump", "censorHop", "deathMessage", "deathToggle"}
+local sValues = {true, 30, true, 30, "#32CD32", 5, false, "", "Disabled", {"Thank you", "Thanks!", "ty :)", "tysm!"}, false, "WEEKLY GOAL: $C / $G", false, "your text here", "#ffffff", true, false, {"Please donate", "I'm so close to my goal!", "donate to me", "please"}, 300, 60, false, 3, false, {"Why did you kill me!", "You killed me :(", "Why why why!"}, false}
 if #getgenv().oldTestingVersionSettings ~= sNames then
 	for i, v in ipairs(sNames) do
 		if getgenv().oldTestingVersionSettings[v] == nil then
@@ -390,9 +394,6 @@ if signPass then
 	})
 	signText:Set(getgenv().oldTestingVersionSettings.signText)
 	signTab:AddButton("Save", function()
-		if #signText:Get() > 221 then
-			return signText:Set("221 Character Limit")
-		end
 		if oldTestingVersionSettingsLock then
 			return
 		end
@@ -416,6 +417,12 @@ local autoThanks = chatTab:AddSwitch("Auto Thank You", function(bool)
 	saveoldTestingVersionSettings()
 end)
 autoThanks:Set(getgenv().oldTestingVersionSettings.autoThanks)
+
+local autoDeath = chatTab:AddSwitch("Auto Death after Donation", function(bool)
+	getgenv().oldTestingVersionSettings.autoDeath = bool
+	saveoldTestingVersionSettings()
+end)
+autoDeath:Set(getgenv().oldTestingVersionSettings.autoDeath)
 
 local autoJump = chatTab:AddSwitch("Auto Jump Per Robux", function(bool)
 	getgenv().oldTestingVersionSettings.autoJump = bool
@@ -494,6 +501,24 @@ bm:AddButton("Save", function()
 		table.insert(bsplit, newline)
 	end
 	getgenv().oldTestingVersionSettings.begMessage = bsplit
+	saveoldTestingVersionSettings()
+end)
+local dm = chatTab:AddFolder("Death Messages:")
+local deathMessage = dm:AddConsole({
+	["y"] = 170,
+	["source"] = "",
+})
+local full = ''
+for i, v in ipairs(getgenv().oldTestingVersionSettings.thanksMessage) do
+	full = full .. v .. "\n"
+end
+DeathMessage:Set(full)
+dm:AddButton("Save", function()
+	local split = {}
+	for newline in string.gmatch(deathMessage:Get(), "[^\n]+") do
+		table.insert(split, newline)
+	end
+	getgenv().oldTestingVersionSettings.deathMessage = split
 	saveoldTestingVersionSettings()
 end)
 
@@ -737,6 +762,41 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 		task.spawn(function()
 			task.wait(getgenv().oldTestingVersionSettings.thanksDelay)
 			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(getgenv().oldTestingVersionSettings.thanksMessage[math.random(#getgenv().oldTestingVersionSettings.thanksMessage)],"All")
+		end)
+	end
+
+    if getgenv().oldTestingVersionSettings.autoDeath then
+		task.spawn(function()
+			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(getgenv().oldTestingVersionSettings.deathMessage[math.random(#getgenv().oldTestingVersionSettings.deathMessage)],"All")
+            task.wait(3)
+            Humanoid.Health = 0
+            task.wait(3)
+            game:GetService('VirtualInputManager'):SendKeyEvent(true, "LeftControl", false, game)
+            local Controls = require(Players.LocalPlayer.PlayerScripts:WaitForChild("PlayerModule")):GetControls()
+            Controls:Disable()
+            Players.LocalPlayer.Character.Humanoid:MoveTo(Vector3.new(booths[tostring(unclaimed[1])]:match("(.+), (.+), (.+)")))
+            local atBooth = false
+            local function noclip()
+                for i,v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        v.CanCollide = false
+                    end
+                end
+            end
+            local noclipper = game:GetService("RunService").Stepped:Connect(noclip)
+            Players.LocalPlayer.Character.Humanoid.MoveToFinished:Connect(function(reached)
+                atBooth = true
+            end)
+            while not atBooth do
+                task.wait(.1)
+                if Players.LocalPlayer.Character.Humanoid:GetState() == Enum.HumanoidStateType.Seated then
+                    Players.LocalPlayer.Character.Humanoid.Jump = true
+                end
+            end
+            Controls:Enable()
+            game:GetService('VirtualInputManager'):SendKeyEvent(false, "LeftControl", false, game)
+            noclipper:Disconnect()
+            Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(Players.LocalPlayer.Character.HumanoidRootPart.Position, Vector3.new(40, 14, 101)))
 		end)
 	end
 	RaisedC = Players.LocalPlayer.leaderstats.Raised.value
