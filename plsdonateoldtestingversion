@@ -508,11 +508,11 @@ local deathMessage = dm:AddConsole({
 	["y"] = 170,
 	["source"] = "",
 })
-local full = ''
-for i, v in ipairs(getgenv().oldTestingVersionSettings.thanksMessage) do
-	full = full .. v .. "\n"
+local dfull = ''
+for i, v in ipairs(getgenv().oldTestingVersionSettings.deathMessage) do
+	dfull = dfull .. v .. "\n"
 end
-DeathMessage:Set(full)
+DeathMessage:Set(dfull)
 dm:AddButton("Save", function()
 	local split = {}
 	for newline in string.gmatch(deathMessage:Get(), "[^\n]+") do
